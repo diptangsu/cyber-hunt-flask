@@ -7,6 +7,7 @@ from flask import request
 from flask import url_for
 
 from models.team import Team
+from decorators import login_required_custom
 
 team_blueprint = Blueprint('team_blueprint', __name__)
 
@@ -71,6 +72,7 @@ def login():
 
 
 @team_blueprint.route('/logout')
+@login_required_custom
 def logout():
     del session['team_id']
     return redirect(url_for('question_blueprint.login'))
