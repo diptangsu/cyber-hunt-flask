@@ -6,7 +6,7 @@ class Question(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    body = db.Column(db.Text(200000))
+    body = db.Column(db.Text())
     hint = db.Column(db.String(200))
     answer = db.Column(db.String(100))
     points = db.Column(db.Integer())
@@ -21,4 +21,4 @@ class Question(db.Model):
         self.visible = visible
 
     def __repr__(self):
-        return f'{self.name} [{self.points}]'
+        return f'{self.id}. {self.name} [{self.points}]'
