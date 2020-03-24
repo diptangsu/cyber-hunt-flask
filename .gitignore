@@ -272,3 +272,5 @@ pip-selfcheck.json
 .history
 
 # End of https://www.gitignore.io/api/flask,python,pycharm,virtualenv,visualstudiocode
+.idea/
+.idea

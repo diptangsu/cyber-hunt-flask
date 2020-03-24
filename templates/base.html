@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+
+    <!-- Vendors -->
+
+    <!-- Animate CSS -->
+    <link href="{{ url_for('static', filename='site/vendors/bower_components/animate.css/animate.min.css') }}"
+          rel="stylesheet">
+
+    <!-- Material Design Icons -->
+    <link href="{{ url_for('static', filename='site/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}"
+          rel="stylesheet">
+
+    <!-- Site CSS -->
+    <link href="{{ url_for('static', filename='site/css/app-1.min.css') }}" rel="stylesheet">
+
+    <script src="{{ url_for('static', filename='site/vendors/bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js') }}"></script>
+
+</head>
+
+<body>
+{% block body %}
+
+{% endblock %}
+
+<footer id="footer">
+    Written by Diptangsu Goswami
+
+    <ul class="footer__menu">
+        <li><a href="/question/1">Home</a></li>
+    </ul>
+</footer>
+
+<!-- Javascript Libraries -->
+
+<!-- jQuery -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/jquery/dist/jquery.min.js') }}"></script>
+
+<!-- Bootstrap -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<!-- Malihu ScrollBar -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js') }}"></script>
+
+<!-- Moment -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/moment/min/moment.min.js') }}"></script>
+
+<!-- FullCalendar -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
+
+<!-- Simple Weather -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
+
+<!-- Salvattore -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
+
+<!-- Flot Charts -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/flot/jquery.flot.js') }}"></script>
+<script src="{{ url_for('static', filename='site/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
+<script src="{{ url_for('static', filename='site/vendors/bower_components/flot.curvedlines/curvedLines.js') }}"></script>
+
+<!-- Sparkline Charts -->
+<script src="{{ url_for('static', filename='site/vendors/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+
+<!-- EasyPie Charts -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
+
+<!-- Bootstrap -->
+<script src="{{ url_for('static', filename='site/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<!-- Site Functions & Actions -->
+<script src="{{ url_for('static', filename='site/js/app.min.js') }}"></script>
+
+<script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for message in messages %}
+                $.notify({
+                    message: '{{ message.1 }}'
+                }, {
+                    type: '{{ message.0 }}',
+                    allow_dismiss: true,
+                    placement: {
+                        from: 'top',
+                        align: 'right'
+                    },
+                    delay: 2500,
+                    animate: {
+                        enter: 'animated flipInX',
+                        exit: 'animated flipOutX'
+                    },
+                    offset: {
+                        x: 30,
+                        y: 30
+                    }
+                });
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</script>
+</body>
+</html>
