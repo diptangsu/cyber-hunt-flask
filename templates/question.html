@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ question.name }}
+{% endblock %}
+
+{% block body %}
+
+    {% include 'subtemplates/header.html' %}
+
+    <section id="main">
+        <aside id="navigation">
+            <div class="navigation__header">
+                <i class="zmdi zmdi-long-arrow-left" data-mae-action="block-close"></i>
+            </div>
+            {% include 'subtemplates/timer.html' %}
+
+            {% include 'subtemplates/questions-panel.html' %}
+        </aside>
+
+        {% include 'subtemplates/question-body.html' %}
+    </section>
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static', filename='site/vendors/bower_components/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Bootstrap -->
+    <script src="{{ url_for('static', filename='site/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+{% endblock %}

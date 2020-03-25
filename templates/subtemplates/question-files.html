@@ -1,0 +1,10 @@
+<div class="row">
+    {% for file in files %}
+        <div class="col-sm-2 col-xs-6">
+            <a target="_blank" href="{{ url_for('static', filename=file.path) }}" class="btn btn-default" style="margin-bottom: 10px;">
+                <i class="zmdi zmdi-download zmdi-hc-fw"></i>
+                {{ file.name }}
+            </a>
+        </div>
+    {% endfor %}
+</div>

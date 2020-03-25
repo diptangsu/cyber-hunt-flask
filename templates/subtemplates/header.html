@@ -1,0 +1,36 @@
+<!-- Header -->
+<header id="header">
+    <div class="logo">
+        <a>
+            {{ team.team_name }}
+            <small>SCORE: {{ score }}</small>
+        </a>
+        <i class="logo__trigger zmdi zmdi-menu" data-mae-action="block-open" data-mae-target="#navigation"></i>
+    </div>
+
+    <ul class="top-menu">
+        <li class="dropdown hidden-xs">
+            <a data-toggle="dropdown" href=""><i class="zmdi zmdi-more-vert"></i></a>
+            <ul class="dropdown-menu dropdown-menu--icon pull-right">
+                <li>
+                    <a href="{{ url_for('question_blueprint.leaderboard') }}" target="_blank">
+                        <i class="zmdi zmdi-star"></i>
+                        Leaderboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('question_blueprint.submissions') }}" target="_blank">
+                        <i class="zmdi zmdi-trending-up"></i>
+                        Submissions
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('team_blueprint.logout') }}">
+                        <i class="zmdi zmdi-power"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</header>

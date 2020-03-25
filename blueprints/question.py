@@ -5,6 +5,10 @@ from flask import render_template
 from flask import request
 from flask import abort
 from flask import session
+from flask import url_for
+
+from sqlalchemy.orm import load_only
+from sqlalchemy.sql import func
 
 from decorators import login_required_custom
 
@@ -19,61 +23,54 @@ question_blueprint = Blueprint('question_blueprint', __name__)
 
 
 def get_all_questions():
-    all_questions = []
-    # .filter('id', 'name', 'points')
-
-    def inner():
-        return all_questions
-
-    return inner
-
-
-get_all_questions = get_all_questions()
+    all_questions = Question.query.filter_by(visible=True)
+    return all_questions
 
 
 def get_team_score(team):
-    return 0
+    team_submissions = Submission.query.filter_by(team_id=team.id)
+    score = sum(
+        submission.question.points
+        for submission in team_submissions
+    )
+
+    return score
+
+
+def create_files_dict(path, question_id, file_type):
+    if os.path.exists(path):
+        return [
+            {
+                'path': os.path.join(f'questionsdata/{question_id}/{file_type}s', filename),
+                'name': filename
+            }
+            for filename in os.listdir(path)
+        ]
+    else:
+        return []
 
 
 def get_question_images_files_and_links(question_id):
-    base_path = f'./questions/static/questionsdata/{question_id}/'
+    base_path = f'./static/questionsdata/{question_id}/'
     images_path = os.path.join(base_path, 'images')
     files_path = os.path.join(base_path, 'files')
     links_path = os.path.join(base_path, 'links')
 
-    question_images = None
-    question_files = None
-    question_links = None
-    if os.path.exists(images_path):
-        question_images = [
-            {
-                'path': os.path.join(f'questionsdata/{question_id}/images', image_name),
-                'name': image_name
-            }
-            for image_name in os.listdir(images_path)
-        ]
-    if os.path.exists(files_path):
-        question_files = [
-            {
-                'path': os.path.join(f'questionsdata/{question_id}/files', filename),
-                'name': filename
-            }
-            for filename in os.listdir(files_path)
-        ]
-    if os.path.exists(links_path):
-        question_links = [
-            {
-                'path': os.path.join(f'questionsdata/{question_id}/links', link_name),
-                'name': link_name
-            }
-            for link_name in os.listdir(links_path)
-            if link_name.endswith('.html')
-        ]
+    question_images = create_files_dict(images_path, question_id, 'image')
+    question_files = create_files_dict(files_path, question_id, 'file')
+    question_links = create_files_dict(links_path, question_id, 'link')
 
     return question_images, question_files, question_links
 
 
-@question_blueprint.route('/question/<int:question_id>')
+def get_answered_questions(team):
+    return set(
+        submission.question.id
+        for submission in Submission.query.filter_by(team_id=team.id)
+    )
+
+
+@question_blueprint.route('/question/<int:question_id>', methods=['GET', 'POST'])
 @login_required_custom
 def question(question_id):
     all_questions = get_all_questions()
@@ -84,12 +81,8 @@ def question(question_id):
 
     if request.method == 'GET':
         question_images, question_files, question_links = get_question_images_files_and_links(question_id)
-
         score = get_team_score(team)
-
-        questions_answered = set(
-            Submission.objects.values_list('question__id', flat=True).filter(team=team)
-        )
+        questions_answered = get_answered_questions(team)
 
         return render_template('question.html', **{
             'team': team,
@@ -102,13 +95,12 @@ def question(question_id):
             'questions_list': all_questions
         })
     elif request.method == 'POST':
-        answer = request.POST.get('answer')
+        answer = request.form.get('answer')
         if answer:
             if answer == this_question.answer:
-                try:
-                    Submission.objects.get(team=team, question=this_question)
+                if Submission.get(team_id=team.id, question_id=this_question.id) is not None:
                     flash('You have already answered this question', 'warning')
-                except Submission.DoesNotExist:
+                else:
                     submission = Submission(team_id=team.id, question_id=this_question.id)
                     submission.save()
 
@@ -118,7 +110,7 @@ def question(question_id):
         else:
             flash('Please submit and answer', 'danger')
 
-        return redirect('question_blueprint.question', question_id)
+        return redirect(url_for('question_blueprint.question', question_id=question_id))
 
 
 @question_blueprint.route('/submissions')

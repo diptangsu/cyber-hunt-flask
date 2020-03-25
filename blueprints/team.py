@@ -75,4 +75,4 @@ def login():
 @login_required_custom
 def logout():
     del session['team_id']
-    return redirect(url_for('question_blueprint.login'))
+    return redirect(url_for('team_blueprint.login'))
