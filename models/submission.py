@@ -21,3 +21,18 @@ class Submission(db.Model):
 
     def __repr__(self):
         return f'({self.timestamp.strftime("%d/%m %H:%M")}): {self.team} -> {self.question}'
+
+    @classmethod
+    def get(cls, **kwargs):
+        if kwargs:
+            return cls.query.filter_by(**kwargs).first()
+        else:
+            return cls.query.all()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

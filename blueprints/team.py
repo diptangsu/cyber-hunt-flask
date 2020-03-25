@@ -17,7 +17,7 @@ def index():
     return redirect(url_for('team_blueprint.login'))
 
 
-@team_blueprint.route('/register', methods=['GET', 'POST'])
+@team_blueprint.route('/register/', methods=['GET', 'POST'])
 def register():
     """
     GET /register -> return the register page

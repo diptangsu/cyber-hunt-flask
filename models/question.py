@@ -22,3 +22,18 @@ class Question(db.Model):
 
     def __repr__(self):
         return f'{self.id}. {self.name} [{self.points}]'
+
+    @classmethod
+    def get(cls, **kwargs):
+        if kwargs:
+            return cls.query.filter_by(**kwargs).first()
+        else:
+            return cls.query.all()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
