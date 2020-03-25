@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Leaderboard
+{% endblock %}
+
+{% block body %}
+    <div id="content" class="content--boxed">
+        <div class="content__header">
+        </div>
+
+        <div class="card">
+            <div class="card__header">
+                <h2>Leaderboard <small>Look at where your team stands in the leaderboard</small></h2>
+            </div>
+
+            <div class="card__body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Team name</th>
+                            <th>Score</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for team in team_scores %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ team.team_name }}</td>
+                                <td>{{ team.score }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -115,9 +115,28 @@ def question(question_id):
 
 @question_blueprint.route('/submissions')
 def submissions():
-    ...
+    all_submissions = [
+        {
+            'id': q.id,
+            'name': q.name,
+            'submissions': Submission.query.filter_by(question_id=q.id).count()
+        }
+        for q in Question.get()
+    ]
+    return render_template('submissions.html', **{
+        'submissions': all_submissions
+    })
 
 
 @question_blueprint.route('/leaderboard')
 def leaderboard():
-    ...
+    team_scores = [
+        {
+            'team_name': team.team_name,
+            'score': get_team_score(team)
+        }
+        for team in Team.query.filter_by()
+    ]
+    return render_template('leaderboard.html', **{
+        'team_scores': team_scores
+    })
