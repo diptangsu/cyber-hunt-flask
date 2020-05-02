@@ -7,7 +7,6 @@ from flask import abort
 from flask import session
 from flask import url_for
 
-from sqlalchemy.orm import load_only
 from sqlalchemy.sql import func
 
 from decorators import login_required_custom
@@ -115,14 +114,16 @@ def question(question_id):
 
 @question_blueprint.route('/submissions')
 def submissions():
-    all_submissions = [
-        {
-            'id': q.id,
-            'name': q.name,
-            'submissions': Submission.query.filter_by(question_id=q.id).count()
-        }
-        for q in Question.get()
-    ]
+    all_submissions = Question.query \
+        .outerjoin(Submission) \
+        .group_by(Question.id) \
+        .order_by(Question.id) \
+        .with_entities(
+            Question.id,
+            Question.name,
+            func.count(Submission.id).label('submissions')) \
+        .all()
+
     return render_template('submissions.html', **{
         'submissions': all_submissions
     })
@@ -130,13 +131,15 @@ def submissions():
 
 @question_blueprint.route('/leaderboard')
 def leaderboard():
-    team_scores = [
-        {
-            'team_name': team.team_name,
-            'score': get_team_score(team)
-        }
-        for team in Team.query.filter_by()
-    ]
+    team_scores = Team.query \
+        .outerjoin(Submission) \
+        .outerjoin(Question) \
+        .group_by(Team.team_name) \
+        .with_entities(
+            Team.team_name,
+            func.coalesce(func.sum(Question.points), 0).label('score')) \
+        .with_labels().all()
+        
     return render_template('leaderboard.html', **{
         'team_scores': team_scores
     })
