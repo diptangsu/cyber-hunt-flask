@@ -1,26 +1,43 @@
 <div id="content__grid" data-columns>
-    {% for image in images %}
-        <div class="card"
-             style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            <div class="card__header">
-                <p>{{ image.name }}</p>
-            </div>
+  {% for image in images %}
+  <div
+    class="card"
+    style="
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    "
+  >
+    <div class="card__header">
+      <p>{{ image.name }}</p>
+    </div>
 
-            <div class="card__body">
-                <img style="max-width: 100%;
-                        max-height: 100%;
-                        margin-right: 10px;
-                        margin-top: 0;
-                        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-                     src="{{ url_for('static', filename=image.path) }}"
-                     alt="image">
-            </div>
+    <div class="card__body">
+      <img
+        style="
+          max-width: 100%;
+          max-height: 100%;
+          margin-right: 10px;
+          margin-top: 0;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+            0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        "
+        src="{{ url_for('static', filename=image.path) }}"
+        alt="image"
+      />
+    </div>
 
-            <div class="card__footer">
-                <button class="btn btn-default btn--icon-text">
-                    <i class="zmdi zmdi-download zmdi-hc-fw"></i> Download
-                </button>
-            </div>
-        </div>
-    {% endfor %}
+    <div class="card__footer">
+      <a
+        target="_blank"
+        href="{{ url_for('static', filename=image.path) }}"
+        download="{{ url_for('static', filename=image.path) }}"
+        class="btn btn-default"
+        style="margin-bottom: 10px"
+      >
+        <i class="zmdi zmdi-download zmdi-hc-fw"></i>
+        Download
+      </a>
+    </div>
+  </div>
+  {% endfor %}
 </div>

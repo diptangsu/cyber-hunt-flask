@@ -28,10 +28,7 @@ def get_all_questions():
 
 def get_team_score(team):
     team_submissions = Submission.query.filter_by(team_id=team.id)
-    score = sum(
-        submission.question.points
-        for submission in team_submissions
-    )
+    score = sum(submission.question.points for submission in team_submissions)
 
     return score
 
@@ -40,8 +37,8 @@ def create_files_dict(path, question_id, file_type):
     if os.path.exists(path):
         return [
             {
-                'path': os.path.join(f'questionsdata/{question_id}/{file_type}s', filename),
-                'name': filename
+                'path': f'questionsdata/{question_id}/{file_type}s/{filename}',
+                'name': filename,
             }
             for filename in os.listdir(path)
         ]
@@ -79,31 +76,44 @@ def question(question_id):
         abort(404)
 
     if request.method == 'GET':
-        question_images, question_files, question_links = get_question_images_files_and_links(question_id)
+        question_images, question_files, question_links = (
+            get_question_images_files_and_links(question_id)
+        )
         score = get_team_score(team)
         questions_answered = get_answered_questions(team)
 
-        return render_template('question.html', **{
-            'team': team,
-            'score': score,
-            'question': this_question,
-            'questions_answered': questions_answered,
-            'files': question_files,
-            'images': question_images,
-            'links': question_links,
-            'questions_list': all_questions
-        })
+        return render_template(
+            'question.html',
+            **{
+                'team': team,
+                'score': score,
+                'question': this_question,
+                'questions_answered': questions_answered,
+                'files': question_files,
+                'images': question_images,
+                'links': question_links,
+                'questions_list': all_questions,
+            },
+        )
     elif request.method == 'POST':
         answer = request.form.get('answer')
         if answer:
             if answer == this_question.answer:
-                if Submission.get(team_id=team.id, question_id=this_question.id) is not None:
+                if (
+                    Submission.get(team_id=team.id, question_id=this_question.id)
+                    is not None
+                ):
                     flash('You have already answered this question', 'warning')
                 else:
-                    submission = Submission(team_id=team.id, question_id=this_question.id)
+                    submission = Submission(
+                        team_id=team.id, question_id=this_question.id
+                    )
                     submission.save()
 
-                    flash(f'Correct answer!! You get {this_question.points} points', 'success')
+                    flash(
+                        f'Correct answer!! You get {this_question.points} points',
+                        'success',
+                    )
             else:
                 flash('Wrong answer', 'danger')
         else:
@@ -114,32 +124,30 @@ def question(question_id):
 
 @question_blueprint.route('/submissions')
 def submissions():
-    all_submissions = Question.query \
-        .outerjoin(Submission) \
-        .group_by(Question.id) \
-        .order_by(Question.id) \
+    all_submissions = (
+        Question.query.outerjoin(Submission)
+        .group_by(Question.id)
+        .order_by(Question.id)
         .with_entities(
-            Question.id,
-            Question.name,
-            func.count(Submission.id).label('submissions')) \
+            Question.id, Question.name, func.count(Submission.id).label('submissions')
+        )
         .all()
+    )
 
-    return render_template('submissions.html', **{
-        'submissions': all_submissions
-    })
+    return render_template('submissions.html', **{'submissions': all_submissions})
 
 
 @question_blueprint.route('/leaderboard')
 def leaderboard():
-    team_scores = Team.query \
-        .outerjoin(Submission) \
-        .outerjoin(Question) \
-        .group_by(Team.team_name) \
+    team_scores = (
+        Team.query.outerjoin(Submission)
+        .outerjoin(Question)
+        .group_by(Team.team_name)
         .with_entities(
-            Team.team_name,
-            func.coalesce(func.sum(Question.points), 0).label('score')) \
-        .with_labels().all()
-        
-    return render_template('leaderboard.html', **{
-        'team_scores': team_scores
-    })
+            Team.team_name, func.coalesce(func.sum(Question.points), 0).label('score')
+        )
+        .with_labels()
+        .all()
+    )
+
+    return render_template('leaderboard.html', **{'team_scores': team_scores})

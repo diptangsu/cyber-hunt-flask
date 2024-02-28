@@ -1,16 +1,31 @@
 <div class="navigation__menu c-overflow">
-    <ul>
-        {% for ques in questions_list %}
-            <li class="{% if question.id == ques.id %}navigation__active{% endif %}">
-                <a href="{{ url_for('question_blueprint.question', question_id=ques.id) }}">
-                    {% if ques.id in questions_answered %}
-                        <i class="zmdi zmdi-check-circle zmdi-hc-fw" style="color: #4caf50"></i>
-                    {% else %}
-                        <i class="zmdi zmdi-flag zmdi-hc-fw"></i>
-                    {% endif %}
-                    {{ ques.name }} [{{ ques.points }}]
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+  <ul
+    id="active"
+    style="margin-right: 20px; height: 600px; overflow-y: auto"
+    onload="scroll()"
+  >
+    {% for ques in questions_list %}
+    <li class="{% if question.id == ques.id %}navigation__active{% endif %}">
+      <a
+        href="{{ url_for('question_blueprint.question', question_id=ques.id) }}"
+      >
+        {% if ques.id in questions_answered %}
+        <i class="zmdi zmdi-check-circle zmdi-hc-fw" style="color: #4caf50"></i>
+        {% else %}
+        <i class="zmdi zmdi-flag zmdi-hc-fw"></i>
+        {% endif %} {{ ques.name }} [{{ ques.points }}]
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
 </div>
+<script>
+  $('#active').click(function () {
+    $('div').animate(
+      {
+        scrollTop: $('#active').offset().top,
+      },
+      'slow'
+    )
+  })
+</script>
